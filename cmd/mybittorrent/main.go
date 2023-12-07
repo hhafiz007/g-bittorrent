@@ -32,8 +32,11 @@ func decodeBencode(bencodedString string) (interface{}, error) {
 		}
 
 		return bencodedString[firstColonIndex+1 : firstColonIndex+1+length], nil
-	} else {
-		return "", fmt.Errorf("Only strings are supported at the moment")
+	}else if bencodedString[0] == "i" {
+		end := len(bencodedString)
+		return bencodedString[1 :end], nil
+		
+
 	}
 }
 
