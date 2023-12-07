@@ -34,7 +34,7 @@ func decodeBencode(bencodedString string) (interface{}, error) {
 		return bencodedString[firstColonIndex+1 : firstColonIndex+1+length], nil
 	}else if (bencodedString[0]) == 'i' {
 		end := len(bencodedString)
-		return bencodedString[1 :end-1], nil
+		return int(bencodedString[1 :end-1]), nil
 		
 
 	}else {
