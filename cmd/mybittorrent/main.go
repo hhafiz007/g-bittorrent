@@ -35,7 +35,7 @@ func decodeBencode(bencodedString string) (interface{}, error) {
 	}else if (bencodedString[0]) == 'i' {
 		end := len(bencodedString)
 		num, err := strconv.Atoi(bencodedString[1:end-1])
-		return num, nil
+		return num, err
 		
 
 	}else {
