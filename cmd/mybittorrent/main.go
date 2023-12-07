@@ -37,8 +37,9 @@ func decodeBencode(bencodedString string) (interface{}, error) {
 		return bencodedString[1 :end], nil
 		
 
+	}else {
+		return "", fmt.Errorf("Only strings are supported at the moment")
 	}
-}
 
 func main() {
 	// You can use print statements as follows for debugging, they'll be visible when running tests.
