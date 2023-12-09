@@ -89,7 +89,7 @@ func decodeDict(bencodedString string,idx int) (interface{}, int,error){
 		i = newIdx+1
 		value,newIdx,_ := decodeBencode(bencodedString,i)
 		i = newIdx+1
-		myMap[key] = value
+		myMap[string(key)] = value
 		idx = i
 
 	}
