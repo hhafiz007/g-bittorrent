@@ -83,9 +83,9 @@ func decodeBencode(bencodedString string,idx int) (interface{},int, error) {
 	}else if (bencodedString[idx]) == 'l' {
 	
 		
-		slice,idx,err := decodeList(bencodedString,idx)
+		slice,newIdx,err := decodeList(bencodedString,idx)
 		
-		return slice,idx,err
+		return slice,newIdx,err
 		
 
 	}else {
