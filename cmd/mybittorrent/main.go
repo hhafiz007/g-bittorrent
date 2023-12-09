@@ -89,8 +89,8 @@ func decodeList(bencodedString string) (interface{}, error){
 
 
 	
-		}else if (bencodedString[0]) == 'l' {
-			newSlice,_ := decodeList(bencodedString)
+		}else if (bencodedString[l]) == 'l' {
+			newSlice,_ := decodeList(bencodedString[i:])
 			slice = append(slice, newSlice)
 
 		}else {
