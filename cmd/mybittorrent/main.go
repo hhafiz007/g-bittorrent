@@ -13,7 +13,7 @@ import (
 // Example:
 // - 5:hello -> hello
 // - 10:hello12345 -> hello12345
-func decodeInt(bencodedString string,idx int) (interface{}, error){
+func decodeInt(bencodedString string,idx int) (interface{},int, error){
 	var lastIndex int
 
 	for i := idx; i < len(bencodedString); i++ {
@@ -31,7 +31,7 @@ func decodeInt(bencodedString string,idx int) (interface{}, error){
 }
 
 
-func decodeString(bencodedString string,idx int) (interface{}, error){
+func decodeString(bencodedString string,idx int) (interface{},int, error){
 	var firstColonIndex int
 
 	for i := idx; i < len(bencodedString); i++ {
@@ -52,7 +52,7 @@ func decodeString(bencodedString string,idx int) (interface{}, error){
 	return bencodedString[firstColonIndex+1 : firstColonIndex+1+length],lastIndex, nil
 }
 
-func decodeList(bencodedString string,idx string) (interface{}, error){
+func decodeList(bencodedString string,idx string) (interface{}, int,error){
 	slice:=  make([]interface{},0,4)
 	 
 	i := 1
@@ -72,7 +72,7 @@ func decodeList(bencodedString string,idx string) (interface{}, error){
 }
 
 
-func decodeBencode(bencodedString string,idx int) (interface{}, error) {
+func decodeBencode(bencodedString string,idx int) (interface{},int, error) {
 	if unicode.IsDigit(rune(bencodedString[idx])) {
 		return decodeString(bencodedString,idx)
 	}else if (bencodedString[idx]) == 'i' { 
@@ -81,13 +81,13 @@ func decodeBencode(bencodedString string,idx int) (interface{}, error) {
 	}else if (bencodedString[idx]) == 'l' {
 	
 		
-		slice,err := decodeList(bencodedString,idx)
+		slice,idx,err := decodeList(bencodedString,idx)
 		
-		return slice,err
+		return slice,idx,err
 		
 
 	}else {
-		return "", fmt.Errorf("Only strings are supported at the moment")
+		return "", nil,fmt.Errorf("Only strings are supported at the moment")
 	}
 }
 
