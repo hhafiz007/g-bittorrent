@@ -70,7 +70,7 @@ func decodeList(bencodedString string) (interface{}, error){
 			 }
 
 			
-			i += len(decoded)+len(length)+1
+			i += decodedLength+len(length)+1
 
 			
 		}else if (bencodedString[i]) == 'i' { 
@@ -89,11 +89,12 @@ func decodeList(bencodedString string) (interface{}, error){
 			return "", fmt.Errorf("Only strings are supported at the moment")
 		}
 
-		return slice,nil
+	
 
 
 		
 	}
+	return slice,nil
 
 
 
