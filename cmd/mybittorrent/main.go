@@ -94,6 +94,7 @@ func decodeList(bencodedString string) (interface{}, error){
 
 		
 	}
+	print("hi",slice)
 	return slice,nil
 
 
@@ -112,7 +113,7 @@ func decodeBencode(bencodedString string) (interface{}, error) {
 	
 		
 		slice,err := decodeList(bencodedString)
-		print("hi",slice.PrintInfo())
+		print("hi",slice)
 		return slice,err
 		
 
