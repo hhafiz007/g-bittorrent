@@ -47,18 +47,18 @@ func decodeString(bencodedString string,idx int) (interface{},int, error){
 	if err != nil {
 		return "", err
 	}
-	idx := firstColonIndex+lengthStr
+	idx = firstColonIndex+length
 
-	return bencodedString[firstColonIndex+1 : firstColonIndex+1+length],lastIndex, nil
+	return bencodedString[firstColonIndex+1 : firstColonIndex+1+length],idx, nil
 }
 
-func decodeList(bencodedString string,idx string) (interface{}, int,error){
+func decodeList(bencodedString string,idx int) (interface{}, int,error){
 	slice:=  make([]interface{},0,4)
 	 
 	i := 1
 
 	for bencodedString[i] != 'e' {
-		decoded, newIdx,err := decodeBencode(bencodedString[i:],i)
+		decoded, newIdx,_ := decodeBencode(bencodedString[i:],i)
 		slice = append(slice,decoded)
 		i = newIdx+1
 		idx = i
@@ -87,7 +87,7 @@ func decodeBencode(bencodedString string,idx int) (interface{},int, error) {
 		
 
 	}else {
-		return "", nil,fmt.Errorf("Only strings are supported at the moment")
+		return "", idx,fmt.Errorf("Only strings are supported at the moment")
 	}
 }
 
