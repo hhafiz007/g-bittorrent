@@ -89,6 +89,10 @@ func decodeList(bencodedString string) (interface{}, error){
 
 
 	
+		}else if (bencodedString[0]) == 'l' {
+			newSlice,err := decodeList(bencodedString)
+			slice = append(slice, newSlice)
+
 		}else {
 			return "", fmt.Errorf("Only strings are supported at the moment")
 		}
