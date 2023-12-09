@@ -54,11 +54,12 @@ func decodeString(bencodedString string,idx int) (interface{},int, error){
 
 func decodeList(bencodedString string,idx int) (interface{}, int,error){
 	slice:=  make([]interface{},0,4)
+	char := rune(bencodedString[idx])
 	 
 	i := 1
 
 	for bencodedString[i] != 'e' {
-		decoded, newIdx,_ := decodeBencode(bencodedString[i:],i)
+		decoded, newIdx,_ := decodeBencode(bencodedString,i)
 		fmt.Println("first",bencodedString[i])
 		fmt.Println("hello there",decoded,newIdx)
 		slice = append(slice,decoded)
