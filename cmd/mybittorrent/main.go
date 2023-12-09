@@ -45,7 +45,7 @@ func decodeString(bencodedString string,idx int) (interface{},int, error){
 
 	length, err := strconv.Atoi(lengthStr)
 	if err != nil {
-		return "", err
+		return "", 0,err
 	}
 	idx = firstColonIndex+length
 
