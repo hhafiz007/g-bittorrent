@@ -51,7 +51,7 @@ func decodeString(bencodedString string) (interface{}, error){
 }
 
 func decodeList(bencodedString string) (interface{}, error){
-	var slice []interface{}
+	 slice:=  make([]interface{},0,4)
 	i := 1
 	for i < len(bencodedString)-1{
 		if unicode.IsDigit(rune(bencodedString[i])) {
