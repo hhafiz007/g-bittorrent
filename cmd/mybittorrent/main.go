@@ -62,8 +62,11 @@ func decodeList(bencodedString string) (interface{}, error){
 			if err != nil {
 				slice = append(slice, decoded)
 			}
+			decodedLen := 0
 
-			decodedLen := string(len(decoded))
+			if str, ok := decoded.(string); ok {
+				decodedLen := len(str) }
+
 			i += len(decoded)+len(decodedLen)+1
 
 			
