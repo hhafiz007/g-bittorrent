@@ -23,7 +23,7 @@ func decodeInt(bencodedString string,idx int) (interface{},int, error){
 		}
 	}
 
-	num, err := strconv.Atoi(bencodedString[1:lastIndex])
+	num, err := strconv.Atoi(bencodedString[idx+1:lastIndex])
 	
 	return num,lastIndex, err
 	
@@ -41,7 +41,7 @@ func decodeString(bencodedString string,idx int) (interface{},int, error){
 		}
 	}
 
-	lengthStr := bencodedString[:firstColonIndex]
+	lengthStr := bencodedString[idx:firstColonIndex]
 
 	length, err := strconv.Atoi(lengthStr)
 	if err != nil {
