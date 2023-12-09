@@ -99,7 +99,7 @@ func decodeList(bencodedString string) (interface{}, error){
 		
 	}
 	
-	return slice,nil
+	return slice,err
 
 
 
