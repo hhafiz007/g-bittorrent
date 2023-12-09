@@ -73,12 +73,12 @@ func decodeList(bencodedString string) (interface{}, error){
 
 			
 			i += decodedLength+len(length)+1
-			fmt.Println("string",decoded,i)
+			//fmt.Println("string",decoded,i)
 
 			
 		}else if (bencodedString[i]) == 'i' { 
 			decoded, _ := decodeInt(bencodedString[i:])
-			fmt.Println("int",decoded)
+			//fmt.Println("int",decoded)
 			
 			slice = append(slice, decoded)
 			
