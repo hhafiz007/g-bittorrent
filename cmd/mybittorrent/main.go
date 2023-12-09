@@ -13,16 +13,24 @@ import (
 // Example:
 // - 5:hello -> hello
 // - 10:hello12345 -> hello12345
-func decodeString(bencodedString string) (interface{}, error){
-	end := len(bencodedString)-1
-	num, err := strconv.Atoi(bencodedString[1:end])
+func decodeInt(bencodedString string) (interface{}, error){
+	var lastIndex int
+
+	for i := 0; i < len(bencodedString); i++ {
+		if bencodedString[i] == 'e' {
+			lastIndex = i
+			break
+		}
+	}
+
+	num, err := strconv.Atoi(bencodedString[1:lastIndex])
 	return num, err
 	
 
 }
 
 
-func decodeInt(bencodedString string) (interface{}, error){
+func decodeString(bencodedString string) (interface{}, error){
 	var firstColonIndex int
 
 	for i := 0; i < len(bencodedString); i++ {
@@ -43,23 +51,47 @@ func decodeInt(bencodedString string) (interface{}, error){
 }
 
 func decodeList(bencodedString string) (interface{}, error){
-	var firstColonIndex int
+	var slice []interface{}
+	i := 1
+	for i < len(bencodedString){
+		if unicode.IsDigit(rune(bencodedString[i])) {
 
-	for i := 0; i < len(bencodedString); i++ {
-		if bencodedString[i] == ':' {
-			firstColonIndex = i
-			break
+			
+			decoded, err := decodeString(bencodedString[i:])
+			
+			if err != nil {
+				slice = append(slice, decoded)
+			}
+
+			decodedLen := string(len(decoded))
+			i += len(decoded)+len(decodedLen)+1
+
+			
+		}else if (bencodedString[i]) == 'i' { 
+			decoded, err := decodeInt(bencodedString[i:])
+			if err != nil {
+				slice = append(slice, decoded)
+			}
+			for bencodedString[i] != 'e'{
+				i++
+			}
+			i++
+
+
+	
+		}else {
+			return "", fmt.Errorf("Only strings are supported at the moment")
 		}
+
+		return slice
+
+
+		
 	}
 
-	lengthStr := bencodedString[:firstColonIndex]
 
-	length, err := strconv.Atoi(lengthStr)
-	if err != nil {
-		return "", err
-	}
 
-	return bencodedString[firstColonIndex+1 : firstColonIndex+1+length], nil
+
 }
 
 
@@ -67,7 +99,7 @@ func decodeBencode(bencodedString string) (interface{}, error) {
 	if unicode.IsDigit(rune(bencodedString[0])) {
 		return decodeInt(bencodedString)
 	}else if (bencodedString[0]) == 'i' { 
-		return decodeString(bencodedString)
+		return decodeInt(bencodedString)
 	
 	}else if (bencodedString[0]) == 'l' {
 	
