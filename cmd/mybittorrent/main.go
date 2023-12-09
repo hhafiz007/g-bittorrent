@@ -94,7 +94,7 @@ func decodeList(bencodedString string) (interface{}, error){
 
 		
 	}
-	fmt.Println(len(bencodedString),slice)
+	
 	return slice,nil
 
 
@@ -113,7 +113,7 @@ func decodeBencode(bencodedString string) (interface{}, error) {
 	
 		
 		slice,err := decodeList(bencodedString)
-		print("hi",slice)
+		
 		return slice,err
 		
 
@@ -134,7 +134,7 @@ func main() {
 		bencodedValue := os.Args[2]
 		
 		decoded, err := decodeBencode(bencodedValue)
-		print("main",decoded)
+	
 		if err != nil {
 			fmt.Println(err)
 			return
