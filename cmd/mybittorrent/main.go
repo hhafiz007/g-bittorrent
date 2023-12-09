@@ -52,13 +52,13 @@ func decodeString(bencodedString string) (interface{}, error){
 
 func decodeList(bencodedString string) (interface{}, error){
 	 slice:=  make([]interface{},0,4)
-	 err := nil
+	 
 	i := 1
 	for i < len(bencodedString)-1{
 		if unicode.IsDigit(rune(bencodedString[i])) {
 
 			
-			decoded, err := decodeString(bencodedString[i:])
+			decoded, _ := decodeString(bencodedString[i:])
 			
 			
 			
@@ -77,7 +77,7 @@ func decodeList(bencodedString string) (interface{}, error){
 
 			
 		}else if (bencodedString[i]) == 'i' { 
-			decoded, err := decodeInt(bencodedString[i:])
+			decoded, _ := decodeInt(bencodedString[i:])
 			fmt.Println("int",decoded)
 			
 			slice = append(slice, decoded)
@@ -99,7 +99,7 @@ func decodeList(bencodedString string) (interface{}, error){
 		
 	}
 	
-	return slice,err
+	return slice,nil
 
 
 
