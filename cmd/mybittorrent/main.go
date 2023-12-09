@@ -13,10 +13,10 @@ import (
 // Example:
 // - 5:hello -> hello
 // - 10:hello12345 -> hello12345
-func decodeInt(bencodedString string) (interface{}, error){
+func decodeInt(bencodedString string,idx int) (interface{}, error){
 	var lastIndex int
 
-	for i := 0; i < len(bencodedString); i++ {
+	for i := idx; i < len(bencodedString); i++ {
 		if bencodedString[i] == 'e' {
 			lastIndex = i
 			break
@@ -24,16 +24,17 @@ func decodeInt(bencodedString string) (interface{}, error){
 	}
 
 	num, err := strconv.Atoi(bencodedString[1:lastIndex])
-	return num, err
+	idx = lastIndex
+	return num,idx, err
 	
 
 }
 
 
-func decodeString(bencodedString string) (interface{}, error){
+func decodeString(bencodedString string,idx int) (interface{}, error){
 	var firstColonIndex int
 
-	for i := 0; i < len(bencodedString); i++ {
+	for i := idx; i < len(bencodedString); i++ {
 		if bencodedString[i] == ':' {
 			firstColonIndex = i
 			break
@@ -46,65 +47,24 @@ func decodeString(bencodedString string) (interface{}, error){
 	if err != nil {
 		return "", err
 	}
+	idx := firstColonIndex+lengthStr
 
-	return bencodedString[firstColonIndex+1 : firstColonIndex+1+length], nil
+	return bencodedString[firstColonIndex+1 : firstColonIndex+1+length],lastIndex, nil
 }
 
-func decodeList(bencodedString string) (interface{}, error){
-	 slice:=  make([]interface{},0,4)
+func decodeList(bencodedString string,idx string) (interface{}, error){
+	slice:=  make([]interface{},0,4)
 	 
 	i := 1
-	for i < len(bencodedString)-1{
-		if unicode.IsDigit(rune(bencodedString[i])) {
 
-			
-			decoded, _ := decodeString(bencodedString[i:])
-			
-			
-			
-			slice = append(slice, decoded)
-			
-			var length string
-			var decodedLength int
-			if str, ok := decoded.(string); ok {
-				length = string(len(str))
-				decodedLength = len(str)
-			 }
-
-			
-			i += decodedLength+len(length)+1
-			//fmt.Println("string",decoded,i)
-
-			
-		}else if (bencodedString[i]) == 'i' { 
-			decoded, _ := decodeInt(bencodedString[i:])
-			//fmt.Println("int",decoded)
-			
-			slice = append(slice, decoded)
-			
-			for bencodedString[i] != 'e'{
-				i++
-			}
-			i++
-
-
-	
-		}else if (bencodedString[i]) == 'l' {
-			newSlice,_ := decodeList(bencodedString[i:])
-			fmt.Println(newSlice)
-			slice = append(slice, newSlice)
-
-		}else {
-			return "", fmt.Errorf("Only strings are supported at the moment")
+	for bencodedString[i] != 'e' {
+		decoded, newIdx,err := decodeBencode(bencodedString[i:],i)
+		slice = append(slice,decoded)
+		i = newIdx+1
+		idx = i
 		}
-
 	
-
-
-		
-	}
-	
-	return slice,nil
+	return slice,,idx,nil
 
 
 
@@ -112,16 +72,16 @@ func decodeList(bencodedString string) (interface{}, error){
 }
 
 
-func decodeBencode(bencodedString string) (interface{}, error) {
-	if unicode.IsDigit(rune(bencodedString[0])) {
-		return decodeString(bencodedString)
-	}else if (bencodedString[0]) == 'i' { 
-		return decodeInt(bencodedString)
+func decodeBencode(bencodedString string,idx int) (interface{}, error) {
+	if unicode.IsDigit(rune(bencodedString[idx])) {
+		return decodeString(bencodedString,idx)
+	}else if (bencodedString[idx]) == 'i' { 
+		return decodeInt(bencodedString,idx)
 	
-	}else if (bencodedString[0]) == 'l' {
+	}else if (bencodedString[idx]) == 'l' {
 	
 		
-		slice,err := decodeList(bencodedString)
+		slice,err := decodeList(bencodedString,idx)
 		
 		return slice,err
 		
@@ -142,7 +102,7 @@ func main() {
 		//
 		bencodedValue := os.Args[2]
 		
-		decoded, err := decodeBencode(bencodedValue)
+		decoded,_,err := decodeBencode(bencodedValue,0)
 	
 		if err != nil {
 			fmt.Println(err)
