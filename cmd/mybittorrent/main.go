@@ -59,10 +59,11 @@ func decodeList(bencodedString string,idx int) (interface{}, int,error){
 
 	for bencodedString[i] != 'e' {
 		decoded, newIdx,_ := decodeBencode(bencodedString[i:],i)
-		fmt.Println("hello there",decoded,i)
+		fmt.Println("hello there",decoded,newIdx)
 		slice = append(slice,decoded)
-		idx = i
+		
 		i = newIdx+1
+		idx = i
 		
 		}
 	
