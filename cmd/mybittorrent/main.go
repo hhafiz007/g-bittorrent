@@ -77,6 +77,27 @@ func decodeList(bencodedString string,idx int) (interface{}, int,error){
 
 }
 
+func decodeDict(bencodedString string,idx int) (interface{}, int,error){
+	myMap := make(map[string]interface{})
+
+
+	i := idx+1
+
+
+	for bencodedString[i] != 'e' {
+		key,newIdx,_ := decodeBencode(bencodedString,i)
+		i = newIdx+1
+		value,newIdx,_ := decodeBencode(bencodedString,i)
+		i = newIdx+1
+		myMap[key] = value
+		idx = i
+
+	}
+
+	return idx
+
+}
+
 
 func decodeBencode(bencodedString string,idx int) (interface{},int, error) {
 	if unicode.IsDigit(rune(bencodedString[idx])) {
@@ -90,6 +111,13 @@ func decodeBencode(bencodedString string,idx int) (interface{},int, error) {
 		slice,newIdx,err := decodeList(bencodedString,idx)
 		
 		return slice,newIdx,err
+		
+
+	}else if (bencodedString[idx]) == 'd' {
+	
+		
+		return decodeDict(bencodedString,idx)
+
 		
 
 	}else {
