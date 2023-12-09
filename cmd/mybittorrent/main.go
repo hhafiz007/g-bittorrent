@@ -13,8 +13,7 @@ import (
 // Example:
 // - 5:hello -> hello
 // - 10:hello12345 -> hello12345
-func decodeString(bencodedString string) (interface{}, error)
-{
+func decodeString(bencodedString string) (interface{}, error){
 	end := len(bencodedString)-1
 	num, err := strconv.Atoi(bencodedString[1:end])
 	return num, err
@@ -23,8 +22,7 @@ func decodeString(bencodedString string) (interface{}, error)
 }
 
 
-func decodeInt(bencodedString string) (interface{}, error)
-{
+func decodeInt(bencodedString string) (interface{}, error){
 	var firstColonIndex int
 
 	for i := 0; i < len(bencodedString); i++ {
@@ -44,8 +42,7 @@ func decodeInt(bencodedString string) (interface{}, error)
 	return bencodedString[firstColonIndex+1 : firstColonIndex+1+length], nil
 }
 
-func decodeList(bencodedString string) (interface{}, error)
-{
+func decodeList(bencodedString string) (interface{}, error){
 	var firstColonIndex int
 
 	for i := 0; i < len(bencodedString); i++ {
