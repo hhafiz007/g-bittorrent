@@ -97,7 +97,7 @@ func decodeList(bencodedString string) (interface{}, error){
 
 func decodeBencode(bencodedString string) (interface{}, error) {
 	if unicode.IsDigit(rune(bencodedString[0])) {
-		return decodeInt(bencodedString)
+		return decodeString(bencodedString)
 	}else if (bencodedString[0]) == 'i' { 
 		return decodeInt(bencodedString)
 	
