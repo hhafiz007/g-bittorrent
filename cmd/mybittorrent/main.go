@@ -64,7 +64,7 @@ func decodeList(bencodedString string,idx string) (interface{}, int,error){
 		idx = i
 		}
 	
-	return slice,,idx,nil
+	return slice,idx,nil
 
 
 
