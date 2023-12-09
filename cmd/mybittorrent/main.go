@@ -67,7 +67,7 @@ func decodeBencode(bencodedString string) (interface{}, error) {
 	if unicode.IsDigit(rune(bencodedString[0])) {
 		return decodeInt(bencodedString)
 	}else if (bencodedString[0]) == 'i' { 
-		return decodeString
+		return decodeString(bencodedString)
 	
 	}else if (bencodedString[0]) == 'l' {
 	
