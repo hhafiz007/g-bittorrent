@@ -47,7 +47,7 @@ func decodeString(bencodedString string,idx int) (interface{},int, error){
 	if err != nil {
 		return "", 0,err
 	}
-	lastIndex : = firstColonIndex+length
+	lastIndex := firstColonIndex+length
 
 	return bencodedString[firstColonIndex+1 : firstColonIndex+1+length],lastIndex, nil
 }
