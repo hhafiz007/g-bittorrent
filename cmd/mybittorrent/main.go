@@ -7,6 +7,7 @@ import (
 	"os"
 	"strconv"
 	"unicode"
+	"io/ioutil"
 	// bencode "github.com/jackpal/bencode-go" // Available if you need it!
 )
 
@@ -152,7 +153,14 @@ func main() {
 		jsonOutput, _ := json.Marshal(decoded)
 		
 		fmt.Println(string(jsonOutput))
-	} else {
+	} else if command == "info"{
+		torrentFilePath := os.Args[1]
+		torrentData, _ := ioutil.ReadFile(torrentFilePath)
+		fmt.Println(torrentData)
+
+
+
+	} else{
 		fmt.Println("Unknown command: " + command)
 		os.Exit(1)
 	}
