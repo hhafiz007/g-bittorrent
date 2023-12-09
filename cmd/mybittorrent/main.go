@@ -45,7 +45,7 @@ func decodeString(bencodedString string,idx int) (interface{},int, error){
 
 	length, err := strconv.Atoi(lengthStr)
 	if err != nil {
-		return "", 0,err
+		return "", 1,err
 	}
 	lastIndex := firstColonIndex+length
 	
@@ -65,6 +65,7 @@ func decodeList(bencodedString string,idx int) (interface{}, int,error){
 		
 		i = newIdx+1
 		fmt.Println(newIdx)
+	
 		idx = i
 		
 		}
