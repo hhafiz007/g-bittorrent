@@ -157,7 +157,7 @@ func main() {
 		torrentFilePath := os.Args[1]
 		torrentData, _ := ioutil.ReadFile(torrentFilePath)
 		if err != nil {
-			fmt.Println(err)
+			fmt.Println(err) }
 		fmt.Println(torrentData)
 
 
