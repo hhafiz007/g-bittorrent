@@ -58,7 +58,7 @@ func decodeList(bencodedString string) (interface{}, error){
 
 			
 			decoded, err := decodeString(bencodedString[i:])
-			fmt.Println("string",decoded)
+			
 			
 			if err != nil {
 				slice = append(slice, decoded)
@@ -72,6 +72,7 @@ func decodeList(bencodedString string) (interface{}, error){
 
 			
 			i += decodedLength+len(length)+1
+			fmt.Println("string",decoded,i)
 
 			
 		}else if (bencodedString[i]) == 'i' { 
