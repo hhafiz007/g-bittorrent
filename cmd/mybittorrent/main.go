@@ -48,7 +48,7 @@ func decodeString(bencodedString string,idx int) (interface{},int, error){
 		return "", 0,err
 	}
 	lastIndex := firstColonIndex+length
-	fmt.Println(bencodedString[firstColonIndex+1 : firstColonIndex+1+length],lastIndex)
+	
 
 	return bencodedString[firstColonIndex+1 : firstColonIndex+1+length],lastIndex, nil
 }
@@ -56,7 +56,7 @@ func decodeString(bencodedString string,idx int) (interface{},int, error){
 func decodeList(bencodedString string,idx int) (interface{}, int,error){
 	slice:=  make([]interface{},0,4)
 
-	i := 1
+	i := idx+1
 
 	for bencodedString[i] != 'e' {
 		decoded, newIdx,_ := decodeBencode(bencodedString,i)
