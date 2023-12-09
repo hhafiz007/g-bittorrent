@@ -60,7 +60,6 @@ func decodeList(bencodedString string,idx int) (interface{}, int,error){
 
 	for bencodedString[i] != 'e' {
 		decoded, newIdx,_ := decodeBencode(bencodedString,i)
-		fmt.Println(i)
 		
 		slice = append(slice,decoded)
 		
