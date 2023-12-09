@@ -94,7 +94,7 @@ func decodeList(bencodedString string) (interface{}, error){
 
 		
 	}
-	print("hello",slice)
+	fmt.Println(len(bencodedString),slice)
 	return slice,nil
 
 
