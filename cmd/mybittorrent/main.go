@@ -64,7 +64,7 @@ func decodeList(bencodedString string,idx int) (interface{}, int,error){
 		slice = append(slice,decoded)
 		
 		i = newIdx+1
-		fmt.Println(newIdx)
+		//fmt.Println(newIdx)
 	
 		idx = i
 		
