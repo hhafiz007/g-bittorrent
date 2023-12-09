@@ -137,6 +137,7 @@ func main() {
 		}
 		
 		jsonOutput, _ := json.Marshal(decoded)
+		if bencodedValue[0] == 'l' { return jsonOutput}
 		fmt.Println(string(jsonOutput))
 	} else {
 		fmt.Println("Unknown command: " + command)
