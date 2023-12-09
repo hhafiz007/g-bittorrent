@@ -154,7 +154,7 @@ func main() {
 		
 		fmt.Println(string(jsonOutput))
 	} else if command == "info"{
-		torrentFilePath := os.Args[1]
+		torrentFilePath := os.Args[2]
 		torrentData, err := ioutil.ReadFile(torrentFilePath)
 		if err != nil {
 			fmt.Println(err) }
