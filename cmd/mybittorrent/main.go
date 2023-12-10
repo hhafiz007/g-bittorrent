@@ -11,6 +11,7 @@ import (
 	"bytes"
 	"io/ioutil"
 	"crypto/sha1"
+	"encoding/hex"
   "io"
 	bencode "github.com/jackpal/bencode-go" // Available if you need it!
 )
@@ -218,6 +219,14 @@ func main() {
 		infoHash := h.Sum(nil)
 		//jsonOutput, _ := json.Marshal(infoHash)
 		fmt.Println("Info Hash:",fmt.Sprintf("%x", infoHash))
+		fmt.Println("Piece Length:",torrent.Info.PieceLength)
+		fmt.Println("Piece Length:")
+		pieces := torrent.Info.Pieces
+		for i := 0; i < len(pieces); i += 20 {
+			hash :=[]byte( pieces[i : i+20])
+			fmt.Println(hex.EncodeToString(hash))
+		}
+
 
 
 
