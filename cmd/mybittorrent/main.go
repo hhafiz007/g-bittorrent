@@ -1,7 +1,8 @@
 package main
 
 import (
-	// Uncomment this line to pass the first stage
+	// Uncomment this line to pass the first 
+	"strings"
 	"encoding/json"
 	"fmt"
 	"os"
@@ -9,6 +10,8 @@ import (
 	"unicode"
 	"bytes"
 	"io/ioutil"
+	"crypto/sha1"
+	"io"
 	bencode "github.com/jackpal/bencode-go" // Available if you need it!
 )
 
@@ -133,6 +136,27 @@ func decodeBencode(bencodedString string,idx int) (interface{},int, error) {
 	}
 }
 
+
+
+func encodeToBencode(info Info)(string,error){
+	var builder strings.Builder
+	fmt.Fprintf(&builder, "d%s:lengthi%se", strconv.Itoa(6), strconv.Itoa(info.Length))
+	fmt.Fprintf(&builder, "%s:name%s:%s",strconv.Itoa(4), strconv.Itoa(len(info.Name)), info.Name)
+	fmt.Fprintf(&builder, "%s:piece lengthi%se", strconv.Itoa(12), strconv.Itoa(info.PieceLength))
+	fmt.Fprintf(&builder, "%s:pieces%s:%s", strconv.Itoa(6), strconv.Itoa(len(info.Pieces)), info.Pieces)
+	
+
+
+
+
+	return builder.String(),nil
+
+
+
+
+
+}
+
 type TorrentFile struct {
     Announce string
     Info     struct {
@@ -141,6 +165,13 @@ type TorrentFile struct {
         PieceLength int `bencode:"piece length"`
         Pieces      string
     }
+}
+
+type Info     struct {
+	Length      int
+	Name        string
+	PieceLength int `bencode:"piece length"`
+	Pieces      string
 }
 
 func main() {
@@ -178,6 +209,14 @@ func main() {
 	}
 		fmt.Println("Tracker URL:",torrent.Announce)
 		fmt.Println("Length:",torrent.Info.Length)
+		
+		bencodedInfo,_:=encodeToBencode(torrent.Info)
+		h := sha1.New()
+		io.WriteString(h, bencodedInfo)
+		infoHash := h.Sum(nil)
+		jsonOutput, _ := json.Marshal(infoHash)
+
+		fmt.Println("Info Hash:",string(jsonOutput))
 
 
 
