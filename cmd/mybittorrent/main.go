@@ -11,7 +11,7 @@ import (
 	"bytes"
 	"io/ioutil"
 	"crypto/sha1"
-	"io"
+  "io"
 	bencode "github.com/jackpal/bencode-go" // Available if you need it!
 )
 
@@ -143,12 +143,7 @@ func encodeToBencode(info Info)(string,error){
 	fmt.Fprintf(&builder, "d%s:lengthi%se", strconv.Itoa(6), strconv.Itoa(info.Length))
 	fmt.Fprintf(&builder, "%s:name%s:%s",strconv.Itoa(4), strconv.Itoa(len(info.Name)), info.Name)
 	fmt.Fprintf(&builder, "%s:piece lengthi%se", strconv.Itoa(12), strconv.Itoa(info.PieceLength))
-	fmt.Fprintf(&builder, "%s:pieces%s:%s", strconv.Itoa(6), strconv.Itoa(len(info.Pieces)), info.Pieces)
-	
-
-
-
-
+	fmt.Fprintf(&builder, "%s:pieces%s:%se", strconv.Itoa(6), strconv.Itoa(len(info.Pieces)), info.Pieces)
 	return builder.String(),nil
 
 
@@ -199,6 +194,10 @@ func main() {
 
 		torrentFilePath := os.Args[2]
 		torrentData, err := ioutil.ReadFile(torrentFilePath)
+
+		
+
+
 		if err != nil {
 			fmt.Println(err) }
 		var torrent  TorrentFile
@@ -211,12 +210,14 @@ func main() {
 		fmt.Println("Length:",torrent.Info.Length)
 		
 		bencodedInfo,_:=encodeToBencode(torrent.Info)
+		fmt.Println(bencodedInfo)
+	
 		h := sha1.New()
 		io.WriteString(h, bencodedInfo)
 		infoHash := h.Sum(nil)
 		jsonOutput, _ := json.Marshal(infoHash)
 
-		fmt.Println("Info Hash:",string(jsonOutput))
+	fmt.Println("Info Hash:",string(jsonOutput))
 
 
 
