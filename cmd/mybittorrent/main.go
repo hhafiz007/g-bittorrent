@@ -7,8 +7,9 @@ import (
 	"os"
 	"strconv"
 	"unicode"
+	"bytes"
 	"io/ioutil"
-	// bencode "github.com/jackpal/bencode-go" // Available if you need it!
+	bencode "github.com/jackpal/bencode-go" // Available if you need it!
 )
 
 // Example:
@@ -132,6 +133,16 @@ func decodeBencode(bencodedString string,idx int) (interface{},int, error) {
 	}
 }
 
+type TorrentFile struct {
+    Announce string
+    Info     struct {
+        Length      int
+        Name        string
+        PieceLength int `bencode:"piece length"`
+        Pieces      string
+    }
+}
+
 func main() {
 	// You can use print statements as follows for debugging, they'll be visible when running tests.
 	//fmt.Println("Logs from your program will appear here!")
@@ -159,25 +170,14 @@ func main() {
 		torrentData, err := ioutil.ReadFile(torrentFilePath)
 		if err != nil {
 			fmt.Println(err) }
-		bencodedValue := string(torrentData)
-		decoded,_,err := decodeBencode(bencodedValue,0)
-	
-		if err != nil {
-			fmt.Println(err)
-			return
-		}
-		
-		//jsonOutput, _ := json.Marshal(decoded)
-		if myMap, ok := decoded.(map[string]interface{}); ok {
-			// Now you can work with myMap as a dictionary
-			fmt.Println("Tracker URL:",myMap["announce"].(string))
-		fmt.Println("Length:",myMap["info"].(map[string]interface{})["length"].(int))
-		} else {
-			fmt.Println("The interface does not contain a map.")
-		}
-		
-		// fmt.Println("Tracker URL:",decoded["announce"])
-		// fmt.Println("Length:",decoded["info"]["length"])
+		var torrent  TorrentFile
+		reader := bytes.NewReader(torrentData)
+		err = bencode.Unmarshal(reader, &torrent)
+	if err != nil {
+		fmt.Println(err)
+	}
+		fmt.Println("Tracker URL:",torrent.Announce)
+		fmt.Println("Length:",torrent.Info.Length)
 
 
 
