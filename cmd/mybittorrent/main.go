@@ -194,6 +194,9 @@ func main() {
 
 		torrentFilePath := os.Args[2]
 		torrentData, err := ioutil.ReadFile(torrentFilePath)
+		//testOutput, _ := json.Marshal(string(torrentData))
+
+		//fmt.Println("Info Hash:",string(testOutput))
 
 		
 
@@ -210,14 +213,11 @@ func main() {
 		fmt.Println("Length:",torrent.Info.Length)
 		
 		bencodedInfo,_:=encodeToBencode(torrent.Info)
-		fmt.Println(bencodedInfo)
-	
 		h := sha1.New()
 		io.WriteString(h, bencodedInfo)
 		infoHash := h.Sum(nil)
-		jsonOutput, _ := json.Marshal(infoHash)
-
-	fmt.Println("Info Hash:",string(jsonOutput))
+		//jsonOutput, _ := json.Marshal(infoHash)
+		fmt.Println("Info Hash:",fmt.Sprintf("%x", infoHash))
 
 
 
