@@ -154,11 +154,32 @@ func main() {
 		
 		fmt.Println(string(jsonOutput))
 	} else if command == "info"{
+
 		torrentFilePath := os.Args[2]
 		torrentData, err := ioutil.ReadFile(torrentFilePath)
 		if err != nil {
 			fmt.Println(err) }
-		fmt.Println(torrentData)
+		bencodedValue := string(torrentData)
+		decoded,_,err := decodeBencode(bencodedValue,0)
+	
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+		
+		//jsonOutput, _ := json.Marshal(decoded)
+		if myMap, ok := decoded.(map[string]interface{}); ok {
+			// Now you can work with myMap as a dictionary
+			fmt.Println("Tracker URL:",myMap["announce"].(string))
+		fmt.Println("Length:",myMap["info"].(map[string]interface{})["length"].(int))
+		} else {
+			fmt.Println("The interface does not contain a map.")
+		}
+		
+		// fmt.Println("Tracker URL:",decoded["announce"])
+		// fmt.Println("Length:",decoded["info"]["length"])
+
+
 
 
 
