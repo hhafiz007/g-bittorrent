@@ -12,7 +12,9 @@ import (
 	"io/ioutil"
 	"crypto/sha1"
 	"encoding/hex"
-  "io"
+  	"io"
+  //	"net/http"
+ //		"net/url"
 	bencode "github.com/jackpal/bencode-go" // Available if you need it!
 )
 
@@ -231,6 +233,10 @@ func main() {
 
 
 
+
+	}else if command == "peers"{
+		getTracker()
+		
 
 	} else{
 		fmt.Println("Unknown command: " + command)
