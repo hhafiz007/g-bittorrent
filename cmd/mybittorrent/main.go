@@ -18,6 +18,7 @@ import (
 	bencode "github.com/jackpal/bencode-go" // Available if you need it!
 )
 
+
 // Example:
 // - 5:hello -> hello
 // - 10:hello12345 -> hello12345
@@ -238,7 +239,10 @@ func main() {
 		getTracker()
 		
 
-	} else{
+	}else if command == "handshake"{
+		getHandshake() 
+
+	}else{
 		fmt.Println("Unknown command: " + command)
 		os.Exit(1)
 	}

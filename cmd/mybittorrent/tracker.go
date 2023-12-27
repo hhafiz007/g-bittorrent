@@ -89,3 +89,69 @@ func getTracker(){
 
 
 }
+
+
+
+func getHandshake(){
+
+	torrentFilePath := os.Args[2]
+	torrentData, err := ioutil.ReadFile(torrentFilePath)
+	if err != nil {
+		fmt.Println(err) }
+	var torrent  TorrentFile
+	reader := bytes.NewReader(torrentData)
+	err = bencode.Unmarshal(reader, &torrent)
+	if err != nil {
+		fmt.Println(err)
+	}
+	bencodedInfo,_:=encodeToBencode(torrent.Info)
+	h := sha1.New()
+	io.WriteString(h, bencodedInfo)
+	infoHash := h.Sum(nil)
+
+
+	peerIp = os.Args[3]
+
+	conn, err := net.Dial("tcp", peerIp)
+	if err != nil {
+		fmt.Println(err)
+	}
+	defer conn.Close()
+
+		// Build your handshake
+	pstrlen := byte(19) // The length of the string "BitTorrent protocol"
+	pstr := []byte("BitTorrent protocol")
+	reserved := make([]byte, 8) // Eight zeros
+	peer_id = "00112233445566778899"
+	handshake := append([]byte{pstrlen}, pstr...)
+	handshake = append(handshake, reserved...)
+	handshake = append(handshake, infoHash...) 
+	handshake = append(handshake, peer_id...)
+
+	// Send Handshake
+	_, err := conn.Write(handshake)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	rHandshake, err := conn.Read(handshake)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	fmt.Println(rHandshake)
+
+
+
+
+
+
+		
+
+
+
+
+
+
+
+}
