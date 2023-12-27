@@ -110,7 +110,7 @@ func getHandshake(){
 	infoHash := h.Sum(nil)
 
 
-	peerIp = os.Args[3]
+	peerIp := os.Args[3]
 
 	conn, err := net.Dial("tcp", peerIp)
 	if err != nil {
@@ -122,14 +122,14 @@ func getHandshake(){
 	pstrlen := byte(19) // The length of the string "BitTorrent protocol"
 	pstr := []byte("BitTorrent protocol")
 	reserved := make([]byte, 8) // Eight zeros
-	peer_id = "00112233445566778899"
+	peer_id := "00112233445566778899"
 	handshake := append([]byte{pstrlen}, pstr...)
 	handshake = append(handshake, reserved...)
 	handshake = append(handshake, infoHash...) 
 	handshake = append(handshake, peer_id...)
 
 	// Send Handshake
-	_, err := conn.Write(handshake)
+	_, err = conn.Write(handshake)
 	if err != nil {
 		fmt.Println(err)
 	}
