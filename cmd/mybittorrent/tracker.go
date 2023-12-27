@@ -135,6 +135,6 @@ func getHandshake() {
 		fmt.Println(err)
 	}
 
-	fmt.Println("Peer ID: ", hex.EncodeToString(buffer[48:]))
+	fmt.Println("Peer ID:", hex.EncodeToString(buffer[48:]))
 
 }
