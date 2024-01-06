@@ -26,9 +26,7 @@ import (
 	bencode "github.com/jackpal/bencode-go" // Available if you need it!
 )
 
-func getTracker() interface{} {
-
-	torrentFilePath := os.Args[3]
+func getTracker(torrentFilePath string) interface{} {
 
 	torrentData, err := ioutil.ReadFile(torrentFilePath)
 	if err != nil {
@@ -307,9 +305,8 @@ func getHandshake(peerIp string, downloadP int, myPiece *[]byte) {
 }
 
 func downloadPiece() {
-	print(os.Args[2])
 
-	peerIps := getTracker()
+	peerIps := getTracker(os.Args[3])
 	//fmt.Println(peerIps.([]string)[0])
 	myPiece := make([]byte, 0, 1)
 	getHandshake(string(peerIps.([]string)[0]), 1, &myPiece)
