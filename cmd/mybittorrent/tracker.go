@@ -28,7 +28,7 @@ import (
 
 func getTracker() interface{} {
 
-	torrentFilePath := os.Args[2]
+	torrentFilePath := os.Args[3]
 
 	torrentData, err := ioutil.ReadFile(torrentFilePath)
 	if err != nil {
@@ -44,7 +44,7 @@ func getTracker() interface{} {
 	h := sha1.New()
 	io.WriteString(h, bencodedInfo)
 	infoHash := h.Sum(nil)
-	fmt.Println("Info Hash:", fmt.Sprintf("%x", infoHash))
+	// fmt.Println("Info Hash:", fmt.Sprintf("%x", infoHash))
 	peer_id := "00112233445566778899"
 	port := "6881"
 	uploaded := "0"
@@ -75,7 +75,7 @@ func getTracker() interface{} {
 
 	body, _ := ioutil.ReadAll(res.Body)
 	decoded, _, err := decodeBencode(string(body), 0)
-	fmt.Println(decoded)
+	// fmt.Println(decoded)
 
 	if err != nil {
 		fmt.Println(err)
@@ -90,7 +90,7 @@ func getTracker() interface{} {
 
 		ip := net.IP((strPeers[i : i+4]))
 		port := int((strPeers[i+4]))<<8 + int((strPeers[i+5]))
-		fmt.Printf("%s:%d\n", ip.String(), port)
+		peerIps = append(peerIps, fmt.Sprintf("%s:%d", ip.String(), port))
 	}
 	return peerIps
 
@@ -307,6 +307,7 @@ func getHandshake(peerIp string, downloadP int, myPiece *[]byte) {
 }
 
 func downloadPiece() {
+	print(os.Args[2])
 
 	peerIps := getTracker()
 	//fmt.Println(peerIps.([]string)[0])
@@ -320,5 +321,14 @@ func downloadPiece() {
 	fmt.Println(hex.EncodeToString(infoHash))
 
 	fmt.Println("Info Hash:", fmt.Sprintf("%x", infoHash))
+
+	// filePath := os.Args[2] + "/" + os.Args[3]
+	// file, _ := os.Create(filePath)
+
+	// defer file.Close() // Close the file when the function exits (deferred execution)
+
+	// // Write the data to the file
+	// _, _ = file.Write(myPiece)
+
 	// fmt.Println(tor)
 }
