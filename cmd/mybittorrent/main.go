@@ -209,7 +209,7 @@ func main() {
 		}
 
 	} else if command == "peers" {
-		getTracker()
+		getTracker(string(os.Args[2]))
 
 	} else if command == "handshake" {
 		mP := []byte{}

@@ -306,7 +306,7 @@ func getHandshake(peerIp string, downloadP int, myPiece *[]byte) {
 
 func downloadPiece() {
 
-	peerIps := getTracker(os.Args[3])
+	peerIps := getTracker(string(os.Args[3]))
 	//fmt.Println(peerIps.([]string)[0])
 	myPiece := make([]byte, 0, 1)
 	getHandshake(string(peerIps.([]string)[0]), 1, &myPiece)
