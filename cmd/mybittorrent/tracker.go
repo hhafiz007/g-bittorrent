@@ -237,9 +237,8 @@ func getPiece(conn net.Conn, myPiece *[]byte, currBlock int, pieceLength int) {
 
 }
 
-func getHandshake(peerIp string, downloadP int, myPiece *[]byte) {
+func getHandshake(peerIp string, downloadP int, myPiece *[]byte, torrentFilePath string) {
 
-	torrentFilePath := os.Args[2]
 	torrentData, err := ioutil.ReadFile(torrentFilePath)
 	if err != nil {
 		fmt.Println(err)
@@ -310,8 +309,8 @@ func downloadPiece() {
 	peerIps := getTracker(string(os.Args[3]))
 	//fmt.Println(peerIps.([]string)[0])
 	myPiece := make([]byte, 0, 1)
-	getHandshake(string(peerIps.([]string)[0]), 1, &myPiece)
 	fmt.Println("Piece len", len(myPiece))
+	getHandshake(string(peerIps.([]string)[0]), 1, &myPiece, string(os.Args[3]))
 
 	h := sha1.New()
 	io.WriteString(h, string(myPiece))
@@ -320,13 +319,12 @@ func downloadPiece() {
 
 	fmt.Println("Info Hash:", fmt.Sprintf("%x", infoHash))
 
-	// filePath := os.Args[2] + "/" + os.Args[3]
-	// file, _ := os.Create(filePath)
+	file, _ := os.Create(os.Args[2])
 
-	// defer file.Close() // Close the file when the function exits (deferred execution)
+	defer file.Close() // Close the file when the function exits (deferred execution)
 
 	// // Write the data to the file
-	// _, _ = file.Write(myPiece)
+	_, _ = file.Write(myPiece)
 
 	// fmt.Println(tor)
 }

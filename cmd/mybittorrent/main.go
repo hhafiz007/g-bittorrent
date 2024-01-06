@@ -213,7 +213,7 @@ func main() {
 
 	} else if command == "handshake" {
 		mP := []byte{}
-		getHandshake(os.Args[3], 0, &mP)
+		getHandshake(os.Args[3], 0, &mP, os.Args[2])
 
 	} else if command == "download_piece" {
 		downloadPiece()
