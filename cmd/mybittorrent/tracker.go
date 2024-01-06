@@ -4,28 +4,32 @@ import (
 	// Uncomment this line to pass the first
 
 	//"encoding/json"
+	"encoding/binary"
 	"encoding/hex"
 	"fmt"
-	"os"
 
 	//"strconv"
 	//"unicode"
 	"bytes"
 	"crypto/sha1"
 	"io/ioutil"
+	"math"
 
 	//"encoding/hex"
 	"io"
 	"net"
 	"net/http"
 	"net/url"
+	"os"
+	"time"
 
 	bencode "github.com/jackpal/bencode-go" // Available if you need it!
 )
 
-func getTracker() {
+func getTracker() interface{} {
 
 	torrentFilePath := os.Args[2]
+
 	torrentData, err := ioutil.ReadFile(torrentFilePath)
 	if err != nil {
 		fmt.Println(err)
@@ -40,6 +44,7 @@ func getTracker() {
 	h := sha1.New()
 	io.WriteString(h, bencodedInfo)
 	infoHash := h.Sum(nil)
+	fmt.Println("Info Hash:", fmt.Sprintf("%x", infoHash))
 	peer_id := "00112233445566778899"
 	port := "6881"
 	uploaded := "0"
@@ -60,22 +65,26 @@ func getTracker() {
 	url := fmt.Sprintf("%s?%s", torrent.Announce, query.Encode())
 
 	res, err := http.Get(url)
+
 	defer res.Body.Close()
+
 	if err != nil {
 		fmt.Println("Oops! Something went wrong:", err)
-		return
+
 	}
 
 	body, _ := ioutil.ReadAll(res.Body)
 	decoded, _, err := decodeBencode(string(body), 0)
+	fmt.Println(decoded)
 
 	if err != nil {
 		fmt.Println(err)
-		return
+
 	}
 
 	peers := decoded.(map[string]interface{})["peers"]
 	strPeers := []byte(peers.(string))
+	var peerIps []string
 
 	for i := 0; i < len(strPeers); i += 6 {
 
@@ -83,10 +92,153 @@ func getTracker() {
 		port := int((strPeers[i+4]))<<8 + int((strPeers[i+5]))
 		fmt.Printf("%s:%d\n", ip.String(), port)
 	}
+	return peerIps
 
 }
 
-func getHandshake() {
+func getPiece(conn net.Conn, myPiece *[]byte, currBlock int, pieceLength int) {
+	if currBlock == 1 {
+		fmt.Println("curr block 1")
+		os.Exit(2)
+	}
+	for {
+		bitField := make([]byte, 5)
+		_, err := conn.Read(bitField)
+		if err != nil {
+			fmt.Println(err)
+		}
+
+		fmt.Println(int(bitField[0]), int(bitField[4]))
+		if int(bitField[4]) == 5 {
+			// Message ID for "interested" is 2
+			messageID := byte(2)
+
+			// Message length (excluding the length bytes itself)
+			messageLength := uint32(1)
+
+			// Create a buffer to hold the message
+			messageBuffer := new(bytes.Buffer)
+
+			// Write the message length in big-endian order (4 bytes)
+			binary.Write(messageBuffer, binary.BigEndian, messageLength)
+
+			// Write the message ID
+			messageBuffer.WriteByte(messageID)
+
+			// Get the final message as a byte slice
+			interestedMessage := messageBuffer.Bytes()
+			_, err = conn.Write(interestedMessage)
+			if err != nil {
+				fmt.Println(err)
+			}
+			break
+		}
+	}
+
+	totalBlocks := int(math.Ceil(float64(pieceLength / (16 * 1024))))
+	fmt.Println("Total Blocks", totalBlocks)
+
+	// start := 0
+
+	for {
+		unchoke := make([]byte, 5)
+		_, err := conn.Read(unchoke)
+		if err != nil {
+			fmt.Println(err)
+		}
+		fmt.Println("hi", int(unchoke[4]))
+		if int(unchoke[4]) == 1 {
+
+			for i := currBlock; i < totalBlocks; i++ {
+
+				// Message ID for "interested" is 2
+				fmt.Println("Welcome to request ", i)
+				duration := 2 * time.Second
+				time.Sleep(duration)
+
+				messageID := byte(6)
+
+				// Message length (excluding the length bytes itself)
+				messageLength := uint32(13)
+				messageIndex := uint32(0)
+				messageBegin := uint32((i * (16 * 1024)))
+				messageBlock := uint32(16 * 1024)
+
+				// Create a buffer to hold the message
+				messageBuffer := new(bytes.Buffer)
+
+				// Write the message length in big-endian order (4 bytes)
+				binary.Write(messageBuffer, binary.BigEndian, messageLength)
+
+				// Write the message ID
+				messageBuffer.WriteByte(messageID)
+				binary.Write(messageBuffer, binary.BigEndian, messageIndex)
+
+				// Use binary.Write to write the integer to the buffer
+				binary.Write(messageBuffer, binary.BigEndian, messageBegin)
+				binary.Write(messageBuffer, binary.BigEndian, messageBlock)
+
+				// Get the final message as a byte slice
+				requestMessage := messageBuffer.Bytes()
+				_, err = conn.Write(requestMessage)
+
+				if err != nil {
+					fmt.Println(err)
+				}
+				for {
+
+					reqBlock := make([]byte, 5)
+					_, err = conn.Read(reqBlock)
+					if err != nil {
+						fmt.Println(err)
+					}
+					fmt.Println(reqBlock)
+					if int(reqBlock[4]) == 7 {
+
+						reqPieceMessage := bytes.Repeat([]byte{0}, 16384+4+4)
+
+						totalReads := 0
+
+						for totalReads < 16392 {
+
+							singleByte := make([]byte, 1)
+
+							_, err = conn.Read(singleByte)
+							if err != nil {
+								fmt.Println(err)
+							}
+							// totalReads+=1
+							reqPieceMessage[totalReads] = singleByte[0]
+							totalReads += 1
+
+						}
+
+						*myPiece = append(*myPiece, reqPieceMessage[8:]...)
+
+						// fmt.Println((reqPieceMessage))
+						fmt.Println("Welcome to the end 7 for block", i)
+						break
+						// os.Exit(2)
+
+					}
+					// else if int(reqBlock[4]) == 0 {
+					// 	fmt.Println("connection choked")
+					// 	// os.Exit(2)
+					// 	getPiece(conn, myPiece, i, pieceLength)
+
+					// }
+
+				}
+				fmt.Println("Welcome to end of request ", i)
+			}
+			break
+		}
+
+	}
+
+}
+
+func getHandshake(peerIp string, downloadP int, myPiece *[]byte) {
 
 	torrentFilePath := os.Args[2]
 	torrentData, err := ioutil.ReadFile(torrentFilePath)
@@ -104,13 +256,14 @@ func getHandshake() {
 	io.WriteString(h, bencodedInfo)
 	infoHash := h.Sum(nil)
 
-	peerIp := os.Args[3]
-
 	conn, err := net.Dial("tcp", peerIp)
+
 	if err != nil {
 		fmt.Println(err)
 	}
 	defer conn.Close()
+
+	//fmt.Println(peerIp)
 
 	// Build your handshake
 	pstrlen := byte(19) // The length of the string "BitTorrent protocol"
@@ -133,8 +286,39 @@ func getHandshake() {
 	_, err = conn.Read(buffer)
 	if err != nil {
 		fmt.Println(err)
+		os.Exit(2)
 	}
 
 	fmt.Println("Peer ID:", hex.EncodeToString(buffer[48:]))
 
+	if downloadP == 1 {
+		getPiece(conn, myPiece, 0, torrent.Info.PieceLength)
+		h := sha1.New()
+		io.WriteString(h, string(*myPiece))
+		infoHash := h.Sum(nil)
+		fmt.Println(hex.EncodeToString(infoHash))
+
+		if bytes.Equal(infoHash, []byte(torrent.Info.Pieces[:20])) {
+			fmt.Println("Hashes are equal")
+
+		}
+	}
+
+}
+
+func downloadPiece() {
+
+	peerIps := getTracker()
+	//fmt.Println(peerIps.([]string)[0])
+	myPiece := make([]byte, 0, 1)
+	getHandshake(string(peerIps.([]string)[0]), 1, &myPiece)
+	fmt.Println("Piece len", len(myPiece))
+
+	h := sha1.New()
+	io.WriteString(h, string(myPiece))
+	infoHash := h.Sum(nil)
+	fmt.Println(hex.EncodeToString(infoHash))
+
+	fmt.Println("Info Hash:", fmt.Sprintf("%x", infoHash))
+	// fmt.Println(tor)
 }
