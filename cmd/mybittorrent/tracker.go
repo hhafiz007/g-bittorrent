@@ -88,6 +88,7 @@ func getTracker(torrentFilePath string) interface{} {
 
 		ip := net.IP((strPeers[i : i+4]))
 		port := int((strPeers[i+4]))<<8 + int((strPeers[i+5]))
+		fmt.Println(fmt.Sprintf("%s:%d", ip.String(), port))
 		peerIps = append(peerIps, fmt.Sprintf("%s:%d", ip.String(), port))
 	}
 	return peerIps
