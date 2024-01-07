@@ -8,6 +8,7 @@ import (
 	"encoding/hex"
 	"flag"
 	"fmt"
+	"strconv"
 
 	//"strconv"
 	//"unicode"
@@ -98,7 +99,7 @@ func getTracker(torrentFilePath string) interface{} {
 
 }
 
-func getPiece(conn net.Conn, myPiece *[]byte, currBlock int, pieceLength int) {
+func getPiece(conn net.Conn, myPiece *[]byte, currBlock int, pieceLength int, pieceIndex int) {
 	if currBlock == 1 {
 		fmt.Println("curr block 1")
 		os.Exit(2)
@@ -162,7 +163,7 @@ func getPiece(conn net.Conn, myPiece *[]byte, currBlock int, pieceLength int) {
 
 				// Message length (excluding the length bytes itself)
 				messageLength := uint32(13)
-				messageIndex := uint32(0)
+				messageIndex := uint32(pieceIndex)
 				messageBegin := uint32((i * (16 * 1024)))
 				messageBlock := uint32(16 * 1024)
 
@@ -240,7 +241,7 @@ func getPiece(conn net.Conn, myPiece *[]byte, currBlock int, pieceLength int) {
 
 }
 
-func getHandshake(peerIp string, downloadP int, myPiece *[]byte, torrentFilePath string) {
+func getHandshake(peerIp string, downloadP int, myPiece *[]byte, torrentFilePath string, pieceIndex int) {
 
 	torrentData, err := ioutil.ReadFile(torrentFilePath)
 	if err != nil {
@@ -293,7 +294,7 @@ func getHandshake(peerIp string, downloadP int, myPiece *[]byte, torrentFilePath
 	fmt.Println("Peer ID:", hex.EncodeToString(buffer[48:]))
 
 	if downloadP == 1 {
-		getPiece(conn, myPiece, 0, torrent.Info.PieceLength)
+		getPiece(conn, myPiece, 0, torrent.Info.PieceLength, pieceIndex)
 		h := sha1.New()
 		io.WriteString(h, string(*myPiece))
 		infoHash := h.Sum(nil)
@@ -312,8 +313,9 @@ func downloadPiece() {
 	peerIps := getTracker(string(os.Args[4]))
 	fmt.Println(peerIps.([]string)[0])
 	myPiece := make([]byte, 0, 1)
+	pieceIndex, _ := strconv.Atoi(os.Args[5])
 	// fmt.Println("Piece len", len(myPiece))
-	getHandshake(string(peerIps.([]string)[1]), 1, &myPiece, string(os.Args[4]))
+	getHandshake(string(peerIps.([]string)[1]), 1, &myPiece, string(os.Args[4]), int(pieceIndex))
 
 	h := sha1.New()
 	io.WriteString(h, string(myPiece))
@@ -339,7 +341,7 @@ func downloadPiece() {
 	if err != nil {
 		fmt.Println("Error reading file:", err)
 	} else {
-		fmt.Println("Piece 0 downloaded to ", flag.Arg(2))
+		fmt.Printf("Piece %d downloaded to %s.\n", pieceIndex, string(flag.Arg(2)))
 	}
 
 	// fmt.Println(tor)
