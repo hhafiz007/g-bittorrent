@@ -218,6 +218,9 @@ func main() {
 	} else if command == "download_piece" {
 		downloadPiece()
 
+	} else if command == "download" {
+		finalDowwnload()
+
 	} else {
 		fmt.Println("Unknown command: " + command)
 		os.Exit(1)

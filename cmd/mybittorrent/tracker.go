@@ -312,11 +312,13 @@ func getHandshake(peerIp string, downloadP int, myPiece *[]byte, torrentFilePath
 		h := sha1.New()
 		io.WriteString(h, string(*myPiece))
 		infoHash := h.Sum(nil)
-		fmt.Println(hex.EncodeToString(infoHash))
+		// fmt.Println(pieceIndex*20, )
 
-		if bytes.Equal(infoHash, []byte(torrent.Info.Pieces[:20])) {
+		if bytes.Equal(infoHash, []byte(torrent.Info.Pieces[(pieceIndex*20):(pieceIndex*20)+20])) {
 			fmt.Println("Hashes are equal")
 
+		} else {
+			fmt.Println("Hash not equal")
 		}
 	}
 
@@ -349,7 +351,7 @@ func downloadPiece() {
 	// fmt.Println(dirPath)
 	err := os.MkdirAll(dirPath, os.ModePerm)
 
-	filepath := string(flag.Arg(2))
+	filepath := "." + string(flag.Arg(2))
 
 	f, _ := os.Create(filepath)
 
@@ -368,7 +370,53 @@ func downloadPiece() {
 	// fmt.Println(tor) gvhvnvbmbnmbhbb
 }
 
-// dirPath := path.Dir(string(flag.Arg(2)))
+func downloadPiece1(fileName string, pieceIndex int) []byte {
 
-// // Create the directory and any necessary parents
-// err := os.MkdirAll(dirPath, os.ModePerm)
+	peerIps := getTracker(fileName)
+	fmt.Println(peerIps.([]string)[0])
+	myPiece := make([]byte, 0, 1)
+
+	// fmt.Println("Piece len", len(myPiece))
+	getHandshake(string(peerIps.([]string)[1]), 1, &myPiece, fileName, int(pieceIndex))
+
+	return myPiece
+
+	// fmt.Println(tor) gvhvnvbmbnmbhbb
+}
+
+func finalDowwnload() {
+	myPiece := make([]byte, 0, 1)
+
+	torrentFilePath := os.Args[4]
+
+	var torrent TorrentFile
+	torrentData, _ := ioutil.ReadFile(torrentFilePath)
+	reader := bytes.NewReader(torrentData)
+	_ = bencode.Unmarshal(reader, &torrent)
+
+	for i := 0; i < int(len(torrent.Info.Pieces)/20); i++ {
+		fmt.Print(i)
+		newPiece := downloadPiece1(string(os.Args[4]), i)
+		myPiece = append(myPiece, newPiece...)
+	}
+
+	fmt.Println(len(myPiece))
+
+	fPath := string(os.Args[3])
+
+	dirPath := path.Dir(fPath)
+
+	// fmt.Println(dirPath)
+	_ = os.MkdirAll(dirPath, os.ModePerm)
+
+	filepath := fPath
+
+	f, _ := os.Create(filepath)
+
+	defer f.Close()
+
+	_, _ = f.Write(myPiece)
+
+	fmt.Printf("Downloaded test.torrent to /tmp/test.txt.\n")
+
+}
