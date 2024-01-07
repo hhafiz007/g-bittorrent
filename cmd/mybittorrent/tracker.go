@@ -8,6 +8,7 @@ import (
 	"encoding/hex"
 	"flag"
 	"fmt"
+	"path"
 	"strconv"
 
 	//"strconv"
@@ -324,9 +325,16 @@ func downloadPiece() {
 
 	fmt.Println("Info Hash:", fmt.Sprintf("%x", infoHash))
 
+	// Create the directory and any necessary parents
+
 	var output string
 	flag.StringVar(&output, "o", "/tmp/test-piece-0", "Torrent file destination")
 	flag.Parse()
+
+	dirPath := "." + path.Dir(string(flag.Arg(2)))
+
+	// fmt.Println(dirPath)
+	err := os.MkdirAll(dirPath, os.ModePerm)
 
 	filepath := "." + string(flag.Arg(2))
 
@@ -337,7 +345,7 @@ func downloadPiece() {
 	n2, _ := f.Write(myPiece)
 
 	fmt.Printf("wrote %d bytes\n", n2)
-	_, err := ioutil.ReadFile(filepath)
+	_, err = ioutil.ReadFile(filepath)
 	if err != nil {
 		fmt.Println("Error reading file:", err)
 	} else {
@@ -346,3 +354,8 @@ func downloadPiece() {
 
 	// fmt.Println(tor)
 }
+
+// dirPath := path.Dir(string(flag.Arg(2)))
+
+// // Create the directory and any necessary parents
+// err := os.MkdirAll(dirPath, os.ModePerm)
