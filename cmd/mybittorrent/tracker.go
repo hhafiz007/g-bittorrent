@@ -6,6 +6,7 @@ import (
 	//"encoding/json"
 	"encoding/binary"
 	"encoding/hex"
+	"flag"
 	"fmt"
 
 	//"strconv"
@@ -16,6 +17,7 @@ import (
 	"math"
 
 	//"encoding/hex"
+
 	"io"
 	"net"
 	"net/http"
@@ -306,11 +308,11 @@ func getHandshake(peerIp string, downloadP int, myPiece *[]byte, torrentFilePath
 
 func downloadPiece() {
 
-	peerIps := getTracker(string(os.Args[3]))
-	//fmt.Println(peerIps.([]string)[0])
+	peerIps := getTracker(string(os.Args[4]))
+	fmt.Println(peerIps.([]string)[0])
 	myPiece := make([]byte, 0, 1)
 	fmt.Println("Piece len", len(myPiece))
-	getHandshake(string(peerIps.([]string)[0]), 1, &myPiece, string(os.Args[3]))
+	getHandshake(string(peerIps.([]string)[1]), 1, &myPiece, string(os.Args[4]))
 
 	h := sha1.New()
 	io.WriteString(h, string(myPiece))
@@ -319,12 +321,25 @@ func downloadPiece() {
 
 	fmt.Println("Info Hash:", fmt.Sprintf("%x", infoHash))
 
-	file, _ := os.Create(os.Args[2])
+	var output string
+	flag.StringVar(&output, "o", "/tmp/test-piece-0", "Torrent file destination")
+	flag.Parse()
 
-	defer file.Close() // Close the file when the function exits (deferred execution)
+	filepath := "." + string(flag.Arg(2))
 
-	// // Write the data to the file
-	_, _ = file.Write(myPiece)
+	f, _ := os.Create(filepath)
+
+	defer f.Close()
+
+	n2, _ := f.Write(myPiece)
+
+	fmt.Printf("wrote %d bytes\n", n2)
+	content, err := ioutil.ReadFile(filepath)
+	if err != nil {
+		fmt.Println("Error reading file:", err)
+	} else {
+		fmt.Println("File content:", string(content))
+	}
 
 	// fmt.Println(tor)
 }
