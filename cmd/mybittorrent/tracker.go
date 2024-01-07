@@ -23,7 +23,8 @@ import (
 	"net/http"
 	"net/url"
 	"os"
-	"time"
+
+	// "time"
 
 	bencode "github.com/jackpal/bencode-go" // Available if you need it!
 )
@@ -154,8 +155,8 @@ func getPiece(conn net.Conn, myPiece *[]byte, currBlock int, pieceLength int) {
 
 				// Message ID for "interested" is 2
 				fmt.Println("Welcome to request ", i)
-				duration := 0001 * time.Second
-				time.Sleep(duration)
+				// duration := 0001 * time.Second
+				// time.Sleep(duration)
 
 				messageID := byte(6)
 
@@ -311,7 +312,7 @@ func downloadPiece() {
 	peerIps := getTracker(string(os.Args[4]))
 	fmt.Println(peerIps.([]string)[0])
 	myPiece := make([]byte, 0, 1)
-	fmt.Println("Piece len", len(myPiece))
+	// fmt.Println("Piece len", len(myPiece))
 	getHandshake(string(peerIps.([]string)[1]), 1, &myPiece, string(os.Args[4]))
 
 	h := sha1.New()
