@@ -100,11 +100,8 @@ func getTracker(torrentFilePath string) interface{} {
 
 }
 
-func getPiece(conn net.Conn, myPiece *[]byte, currBlock int, pieceLength int, pieceIndex int) {
-	if currBlock == 1 {
-		fmt.Println("curr block 1")
-		os.Exit(2)
-	}
+func getPiece(conn net.Conn, myPiece *[]byte, currBlock int, pieceLength int, pieceIndex int, totalLength int) {
+
 	for {
 		bitField := make([]byte, 5)
 		_, err := conn.Read(bitField)
@@ -139,7 +136,14 @@ func getPiece(conn net.Conn, myPiece *[]byte, currBlock int, pieceLength int, pi
 		}
 	}
 
-	totalBlocks := int(math.Ceil(float64(pieceLength / (16 * 1024))))
+	if (pieceIndex+1)*pieceLength > totalLength {
+		pieceLength = totalLength - ((pieceIndex) * pieceLength)
+
+	}
+	fmt.Println(pieceLength)
+
+	totalBlocks := int(math.Ceil(float64(pieceLength) / float64(16*1024)))
+
 	fmt.Println("Total Blocks", totalBlocks)
 
 	// start := 0
@@ -162,11 +166,18 @@ func getPiece(conn net.Conn, myPiece *[]byte, currBlock int, pieceLength int, pi
 
 				messageID := byte(6)
 
+				length := 16 * 1024
+
 				// Message length (excluding the length bytes itself)
 				messageLength := uint32(13)
 				messageIndex := uint32(pieceIndex)
 				messageBegin := uint32((i * (16 * 1024)))
-				messageBlock := uint32(16 * 1024)
+
+				if (messageBegin + uint32(length)) > uint32(pieceLength) {
+					length = pieceLength - int(messageBegin)
+				}
+
+				messageBlock := uint32(length)
 
 				// Create a buffer to hold the message
 				messageBuffer := new(bytes.Buffer)
@@ -196,14 +207,15 @@ func getPiece(conn net.Conn, myPiece *[]byte, currBlock int, pieceLength int, pi
 					if err != nil {
 						fmt.Println(err)
 					}
-					fmt.Println(reqBlock)
+					fmt.Println(length)
+
 					if int(reqBlock[4]) == 7 {
 
-						reqPieceMessage := bytes.Repeat([]byte{0}, 16384+4+4)
+						reqPieceMessage := bytes.Repeat([]byte{0}, length+4+4)
 
 						totalReads := 0
 
-						for totalReads < 16392 {
+						for totalReads < length+4+4 {
 
 							singleByte := make([]byte, 1)
 
@@ -234,6 +246,7 @@ func getPiece(conn net.Conn, myPiece *[]byte, currBlock int, pieceLength int, pi
 
 				}
 				fmt.Println("Welcome to end of request ", i)
+
 			}
 			break
 		}
@@ -295,7 +308,7 @@ func getHandshake(peerIp string, downloadP int, myPiece *[]byte, torrentFilePath
 	fmt.Println("Peer ID:", hex.EncodeToString(buffer[48:]))
 
 	if downloadP == 1 {
-		getPiece(conn, myPiece, 0, torrent.Info.PieceLength, pieceIndex)
+		getPiece(conn, myPiece, 0, torrent.Info.PieceLength, pieceIndex, torrent.Info.Length)
 		h := sha1.New()
 		io.WriteString(h, string(*myPiece))
 		infoHash := h.Sum(nil)
