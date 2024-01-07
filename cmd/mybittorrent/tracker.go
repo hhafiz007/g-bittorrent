@@ -349,7 +349,7 @@ func downloadPiece() {
 	// fmt.Println(dirPath)
 	err := os.MkdirAll(dirPath, os.ModePerm)
 
-	filepath := "." + string(flag.Arg(2))
+	filepath := string(flag.Arg(2))
 
 	f, _ := os.Create(filepath)
 
