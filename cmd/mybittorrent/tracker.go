@@ -349,7 +349,7 @@ func downloadPiece() {
 	if err != nil {
 		fmt.Println("Error reading file:", err)
 	} else {
-		fmt.Printf("Piece %d downloaded to %s.\n", pieceIndex, string(flag.Arg(2)))
+		fmt.Printf("Piece %d downloaded to %s\n", pieceIndex, string(flag.Arg(2)))
 	}
 
 	// fmt.Println(tor) gvhvnvbmbnmbhbb
