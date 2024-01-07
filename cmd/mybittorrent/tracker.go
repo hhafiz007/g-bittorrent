@@ -154,7 +154,7 @@ func getPiece(conn net.Conn, myPiece *[]byte, currBlock int, pieceLength int) {
 
 				// Message ID for "interested" is 2
 				fmt.Println("Welcome to request ", i)
-				duration := 2 * time.Second
+				duration := 0001 * time.Second
 				time.Sleep(duration)
 
 				messageID := byte(6)
@@ -338,7 +338,7 @@ func downloadPiece() {
 	if err != nil {
 		fmt.Println("Error reading file:", err)
 	} else {
-		fmt.Println("File content:", string(content))
+		fmt.Println("Piece 0 downloaded to ", flag.Arg(2))
 	}
 
 	// fmt.Println(tor)
