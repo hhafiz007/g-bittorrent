@@ -334,7 +334,7 @@ func downloadPiece() {
 	n2, _ := f.Write(myPiece)
 
 	fmt.Printf("wrote %d bytes\n", n2)
-	content, err := ioutil.ReadFile(filepath)
+	_, err := ioutil.ReadFile(filepath)
 	if err != nil {
 		fmt.Println("Error reading file:", err)
 	} else {
