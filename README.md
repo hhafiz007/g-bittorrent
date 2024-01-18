@@ -1,36 +1,23 @@
-[![progress-banner](https://backend.codecrafters.io/progress/bittorrent/d25cbe3f-d9d6-401b-9c8e-c536b8197505)](https://app.codecrafters.io/users/codecrafters-bot?r=2qF)
+Overview
+This Go-based BitTorrent client is engineered to be a fault-tolerant and decentralized solution for peer-to-peer file sharing. It encompasses a robust implementation of the BitTorrent Peer Protocol, .torrent file parsing, and various features aimed at enhancing performance and reliability.
 
-This is a starting point for Go solutions to the
-["Build Your Own BitTorrent" Challenge](https://app.codecrafters.io/courses/bittorrent/overview).
+Key Features
+Fault-Tolerant Design: The client is designed to gracefully handle errors and continue operation even in challenging network conditions.
 
-In this challenge, you’ll build a BitTorrent client that's capable of parsing a
-.torrent file and downloading a file from a peer. Along the way, we’ll learn
-about how torrent files are structured, HTTP trackers, BitTorrent’s Peer
-Protocol, pipelining and more.
+Decentralized Architecture: Emphasizing a decentralized approach, the client minimizes dependencies on central servers, promoting a distributed file-sharing ecosystem.
 
-**Note**: If you're viewing this repo on GitHub, head over to
-[codecrafters.io](https://codecrafters.io) to try the challenge.
+Torrent File Parsing: Accurate and efficient parsing of .torrent files, enabling users to initiate downloads seamlessly.
 
-# Passing the first stage
+BitTorrent Peer Protocol Implementation: A comprehensive implementation of the BitTorrent Peer Protocol, facilitating efficient communication and data exchange among peers.
 
-The entry point for your BitTorrent implementation is in
-`cmd/mybittorrent/main.go`. Study and uncomment the relevant code, and push your
-changes to pass the first stage:
+Pipelining: Incorporates pipelining techniques to optimize data transfer between peers, enhancing overall download and upload speeds.
 
-```sh
-git add .
-git commit -m "pass 1st stage" # any msg
-git push origin master
-```
+Work Queue System: Utilizes a work queue system to manage and prioritize tasks, ensuring efficient utilization of system resources.
 
-Time to move on to the next stage!
+Extensive Serialization: Implements extensive serialization techniques for optimized data exchange, contributing to enhanced performance during peer interactions.
 
-# Stage 2 & beyond
+Usage
+To utilize the client, simply follow the installation instructions provided in the repository. Run the client with the desired .torrent file to initiate peer-to-peer file sharing.
 
-Note: This section is for stages 2 and beyond.
-
-1. Ensure you have `go (1.19)` installed locally
-1. Run `./your_bittorrent.sh` to run your program, which is implemented in
-   `cmd/mybittorrent/main.go`.
-1. Commit your changes and run `git push origin master` to submit your solution
-   to CodeCrafters. Test output will be streamed to your terminal.
+Contributions
+Contributions to the project are welcome! If you wish to contribute, follow the outlined steps in the README file to fork the repository, create a new branch, commit changes, and submit pull requests.
